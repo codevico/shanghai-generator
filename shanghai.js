@@ -325,13 +325,18 @@ data.forEach(section => {
     section.items.forEach(item => {
 
         const li = document.createElement('li')
-        li.innerText = item.name
 
         const cost = document.createElement('span')
         cost.classList.add('item-cost')
         cost.innerHTML = '€ ' + item.cost.toFixed(2)
 
         li.append(cost)
+
+        const name = document.createElement('span')
+        name.classList.add('item-name')
+        name.innerHTML = item.name
+
+        li.append(name)
 
         items.append(li)
 
