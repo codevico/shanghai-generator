@@ -13,11 +13,21 @@ const things = [
     },
     {
         name: 'zuppa',
-        gender: 'fs'
+        gender: 'fs',
+        types: [
+            'di mais',
+            'di pinne',
+            'di granchi',
+            'alle tre freschezze'
+        ]
     },
     {
         name: 'spaghetti',
-        gender: 'mp'
+        gender: 'mp',
+        types: [
+            'di riso',
+            'di soia'
+        ]
     },
     {
         name: 'gnocchi',
@@ -45,6 +55,10 @@ const things = [
     },
     {
         name: 'gamberoni',
+        gender: 'mp'
+    },
+    {
+        name: 'gamberetti',
         gender: 'mp'
     },
     {
@@ -85,11 +99,70 @@ const things = [
     }
 ]
 
+const secondary_things = [
+    ...things,
+    {
+        name: 'uova',
+        gender: 'fp'
+    },
+    {
+        name: 'pinne di pescecane',
+        gender: 'fp'
+    },
+    {
+        name: 'asparagi',
+        gender: 'mp'
+    },
+    {
+        name: 'verdura',
+        gender: 'fs'
+    }, 
+    {
+        name: 'germogli di soia',
+        gender: 'mp'
+    },
+    {
+        name: 'bambù',
+        gender: 'ms'
+    },
+    {
+        name: 'funghi',
+        gender: 'mp'
+    },
+    {
+        name: 'peperoni',
+        gender: 'mp'
+    },
+    {
+        name: 'sedano',
+        gender: 'ms'
+    },
+    {
+        name: 'cipolle',
+        gender: 'fp'
+    },
+    {
+        name: 'sale e pepe',
+        gender: 'mp'
+    },
+    {
+        name: 'diversi aromi',
+        gender: 'mp'
+    },
+    {
+        name: 'ananas',
+        gender: 'ms'
+    }
+]
+
 const adjectives = [
     'fritt@',
     'saltat@',
+    'mist@',
     'piccant#',
     'alla piastra',
+    'alla griglia',
+    'al vapore',
     'in salsa piccante',
     'in salsa agrodolce',
     'in salsa limone',
@@ -147,9 +220,52 @@ const get_gendered_adjective = (adjective, thing) => {
 const generate = () => {
 
     let thing = things.pick()
-    let adjective = get_gendered_adjective(adjectives.pick(), thing)
 
-    return (thing.name + ' ' + adjective).capitalize()
+    let name_parts = [thing.name]
+
+    let use_types = Math.random() > .5
+    let use_adjectives = Math.random() > .1
+
+    if (use_types && thing.types) {
+
+        let use_types = Math.random() > .5
+
+        if (use_types) name_parts.push(thing.types.pick())
+
+    }
+
+    if (use_adjectives) {
+
+        let adjective = get_gendered_adjective(adjectives.pick(), thing)
+
+        name_parts.push(adjective)
+
+    }
+
+    let use_secondary = Math.random() > .8
+    let use_tertiary = Math.random() > .8
+
+    if (use_secondary) {
+
+        let secondary_thing = things.pick()
+
+        while (secondary_thing.name === thing.name) secondary_thing = things.pick()
+
+        name_parts.push('con ' + secondary_thing.name)
+
+        if (use_tertiary) {
+
+            let tertiary_thing = things.pick()
+
+            while ([thing.name, secondary_thing.name].includes(tertiary_thing.name)) tertiary_thing = things.pick()
+
+            name_parts.push('e ' + tertiary_thing.name)
+
+        }
+
+    }
+
+    return (name_parts.join(' ')).capitalize()
 
 }
 
@@ -191,6 +307,8 @@ const data = [
 
 const sections = document.querySelector('.menu-sections')
 
+let global_index = 1
+
 data.forEach(section => {
 
     const element = document.createElement('div')
@@ -202,6 +320,7 @@ data.forEach(section => {
 
     const items = document.createElement('ol')
     items.classList.add('section-items')
+    items.start = global_index
 
     section.items.forEach(item => {
 
@@ -215,6 +334,8 @@ data.forEach(section => {
         li.append(cost)
 
         items.append(li)
+
+        global_index += 1
 
     })
 
